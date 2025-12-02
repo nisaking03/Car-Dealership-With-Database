@@ -1,6 +1,6 @@
-package com.pluralsight;
+package com.pluralsight.Models;
 
-public class LeaseContract extends Contract{
+public class LeaseContract extends Contract {
     private double expectedValue;
     private double leaseFee;
 

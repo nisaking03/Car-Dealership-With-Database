@@ -1,4 +1,11 @@
-package com.pluralsight;
+package com.pluralsight.UserInterface;
+
+import com.pluralsight.Data.ContractFileManager;
+import com.pluralsight.Data.DealershipFileManager;
+import com.pluralsight.Models.Dealership;
+import com.pluralsight.Models.LeaseContract;
+import com.pluralsight.Models.SalesContract;
+import com.pluralsight.Models.Vehicle;
 
 import java.util.List;
 
@@ -125,6 +132,7 @@ public class UserInterface {
         int minMileage = ConsoleHelper.promptForInt("Enter minimum mileage");
         int maxMileage = ConsoleHelper.promptForInt("Enter maximum mileage");
 
+        // FIXED: Changed parameter order to match fixed Dealership method (min, max)
         List<Vehicle> result = dealership.getVehicleByMileage(minMileage, maxMileage);
         displayVehicles(result);
     }

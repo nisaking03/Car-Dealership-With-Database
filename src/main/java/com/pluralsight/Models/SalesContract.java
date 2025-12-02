@@ -1,4 +1,4 @@
-package com.pluralsight;
+package com.pluralsight.Models;
 
 public class SalesContract extends Contract {
     private double salesTaxAmount;

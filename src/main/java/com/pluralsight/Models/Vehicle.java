@@ -1,4 +1,4 @@
-package com.pluralsight;
+package com.pluralsight.Models;
 
 public class Vehicle {
     private int vin;
@@ -92,10 +92,10 @@ public class Vehicle {
                 "Model = " + model + '\n' +
                 "Year = " + year + '\n' +
                 "Color = " + color + '\n' +
-                "Price = " + price + '\n' +
+                "Price = $" + String.format("%.2f", price) + '\n' +
                 "Mileage = " + odometer + '\n' +
+                "VIN = " + vin + '\n' +
                 "Type = " + vehicleType + '\n' +
-                "── ⋅ ⋅ ── ✩ ── ⋅ ⋅ ── ";
+                "════════════════════";
     }
-
 }
