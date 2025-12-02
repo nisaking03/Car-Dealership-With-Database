@@ -56,20 +56,19 @@ public class SalesContract extends Contract {
 
     @Override
     public double getMonthlyPayment() {
-
-        // Calculate based on finance option
-        // If NO finance: return 0.00
-        // If YES and price ≥ $10,000: 4.25% interest, 48 months
-        // If YES and price < $10,000: 5.25% interest, 24 months
+        if (!financeOption) {
+            return 0.00;
+        }
 
         double totalPrice = getTotalPrice();
+        double vehiclePrice = getVehicleSold().getPrice();
 
-        double annualRate = (totalPrice < 10000) ? 0.0525 : 0.0425;
-        int months = (totalPrice < 10000) ? 24 : 48;
+        double annualRate = (vehiclePrice < 10000) ? 0.0525 : 0.0425;
+        int months = (vehiclePrice < 10000) ? 24 : 48;
 
         double monthlyRate = annualRate / 12;
-
         double monthlyPayment = (totalPrice / months) + (totalPrice * monthlyRate);
+
         return monthlyPayment;
     }
 }

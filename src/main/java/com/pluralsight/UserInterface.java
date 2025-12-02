@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserInterface {
@@ -9,32 +8,30 @@ public class UserInterface {
     DealershipFileManager dealershipFileManager;
 
     public UserInterface(){
-
         DealershipFileManager dealFileManager = new DealershipFileManager();
-        dealership =  dealFileManager.getDealership();
+        dealership = dealFileManager.getDealership();
     }
 
     public void display(){
-
-        String mainMenu =
-                        "1 - Find vehicles within a price range\n" +
-                        "2 - Find vehicles by make / model\n" +
-                        "3 - Find vehicles by year range\n" +
-                        "4 - Find vehicles by color\n" +
-                        "5 - Find vehicles by mileage range\n" +
-                        "6 - Find vehicles by type (car, truck, SUV, van)\n" +
-                        "7 - List ALL vehicles\n" +
-                        "8 - Add a vehicle\n" +
-                        "9 - Remove a vehicle\n" +
-                        "99 - Sell/Lease a vehicle\n" +
-                        "0 - Quit \n";
-
+        String mainMenu = """
+                        1 - Find vehicles within a price range
+                        2 - Find vehicles by make / model
+                        3 - Find vehicles by year range
+                        4 - Find vehicles by color
+                        5 - Find vehicles by mileage range
+                        6 - Find vehicles by type (car, truck, SUV, van)
+                        7 - List ALL vehicles
+                        8 - Add a vehicle
+                        9 - Remove a vehicle
+                        99 - Sell/Lease a vehicle
+                        0 - Quit
+                        """;
 
         while (true) {
             System.out.print(mainMenu);
             int command;
 
-            command = ConsoleHelper.promptForInt("Enter here"); //prompt for main menu
+            command = ConsoleHelper.promptForInt("Enter here");
 
             switch (command) {
                 case 1:
@@ -67,17 +64,15 @@ public class UserInterface {
                 case 99:
                     processSellOrLease();
                     break;
-                case 0: //exit
+                case 0:
                     return;
                 default:
-                    System.out.println("Invalid Entry!"); //Error message
+                    System.out.println("Invalid Entry!");
                     break;
-
             }
         }
     }
 
-    // Helper to display any list of vehicles
     private void displayVehicles(List<Vehicle> vehicles) {
         if (vehicles == null || vehicles.isEmpty()) {
             System.out.println("No vehicles found.");
@@ -86,7 +81,7 @@ public class UserInterface {
 
         System.out.println("\n--- Vehicles ---");
         for (Vehicle v : vehicles) {
-            System.out.println(v); // calls to print out each vehicle
+            System.out.println(v);
         }
     }
 
@@ -96,58 +91,58 @@ public class UserInterface {
         double maxPrice = ConsoleHelper.promptForDouble("Enter maximum price");
 
         List<Vehicle> result = dealership.getVehicleByPrice(minPrice, maxPrice);
-        //displayVehicles(result);
+        displayVehicles(result);
     }
+
     private void processGetByMakeModelRequest(){
         System.out.println("What is the Make and Model you are looking for?");
         String make = ConsoleHelper.promptForString("Enter Make");
         String model = ConsoleHelper.promptForString("Enter Model");
 
-        //ArrayList<Vehicle> vehiclesByMakeModel = (ArrayList<Vehicle>) dealership.getVehicleByMakeModel(make,model);
         List<Vehicle> result = dealership.getVehicleByMakeModel(make, model);
         displayVehicles(result);
     }
+
     private void processGetByYearRequest(){
         System.out.println("What is the year you are looking for?");
         int minYear = ConsoleHelper.promptForInt("Enter Minimum Year (YYYY)");
         int maxYear = ConsoleHelper.promptForInt("Enter Maximum Year (YYYY)");
 
-        //ArrayList<Vehicle>vehiclesByYear = (ArrayList<Vehicle>) dealership.getVehicleByYear(minYear,maxYear);
         List<Vehicle> result = dealership.getVehicleByYear(minYear, maxYear);
         displayVehicles(result);
     }
+
     private void processGetByColorRequest(){
         System.out.println("What vehicle color you are looking for?");
         String color = ConsoleHelper.promptForString("Enter color");
 
-//       ArrayList<Vehicle>vehiclesByColor = (ArrayList<Vehicle>) dealership.getVehicleByColor(color);
-//        System.out.println(vehiclesByColor);
-
         List<Vehicle> result = dealership.getVehicleByColor(color);
         displayVehicles(result);
     }
+
     private void processGetByMileageRequest(){
         System.out.println("What vehicle mileage you are looking for?");
         int minMileage = ConsoleHelper.promptForInt("Enter minimum mileage");
         int maxMileage = ConsoleHelper.promptForInt("Enter maximum mileage");
 
-        //ArrayList<Vehicle>vehiclesByMileage = (ArrayList<Vehicle>) dealership.getVehicleByMileage(minMileage, maxMileage);
         List<Vehicle> result = dealership.getVehicleByMileage(minMileage, maxMileage);
         displayVehicles(result);
     }
+
     private void processGetByVehicleTypeRequest(){
         System.out.println("What Type of vehicle are you searching for?");
         String vehicleType = ConsoleHelper.promptForString("Enter vehicle type");
 
-        //ArrayList<Vehicle>vehiclesByType = (ArrayList<Vehicle>) dealership.getVehicleByType(vehicleType);
         List<Vehicle> result = dealership.getVehicleByType(vehicleType);
         displayVehicles(result);
     }
+
     private void processGetAllVehiclesRequest(){
         displayVehicles(dealership.getAllVehicles());
     }
+
     private void processAddVehicleRequest(){
-        int VIN  = ConsoleHelper.promptForInt("What is the vehicle VIN number");
+        int VIN = ConsoleHelper.promptForInt("What is the vehicle VIN number");
         int year = ConsoleHelper.promptForInt("What is the Year of your vehicle");
         String make = ConsoleHelper.promptForString("What is the vehicle make?");
         String model = ConsoleHelper.promptForString("What is the vehicle model?");
@@ -156,62 +151,52 @@ public class UserInterface {
         int odometer = ConsoleHelper.promptForInt("What is the mileage of the vehicle");
         double price = ConsoleHelper.promptForDouble("What is your asking price for the vehicle");
 
-        Vehicle vehicleToAdd = new Vehicle(VIN,year,make,model,vehicleType,color,odometer,price);
+        Vehicle vehicleToAdd = new Vehicle(VIN, year, make, model, vehicleType, color, odometer, price);
         dealership.addVehicle(vehicleToAdd);
 
-        DealershipFileManager dealershipFileManager = new DealershipFileManager();
         DealershipFileManager.saveDealership(dealership);
     }
-    private void processRemoveVehicleRequest(){
-        int vin  = ConsoleHelper.promptForInt("What is the vehicle VIN number");
 
-        Vehicle found = null; // empty box with placeholder
+    private void processRemoveVehicleRequest(){
+        int vin = ConsoleHelper.promptForInt("What is the vehicle VIN number");
+
+        Vehicle found = null;
 
         for(Vehicle v : dealership.getAllVehicles()){
             if(vin == v.getVin()){
                 found = v;
-
                 break;
-                //dealership.removeVehicle(v);
-                //System.out.println("Vehicle Removed!");
-               // this.dealershipFileManager.saveDealership(dealership);
-
             }
         }
 
-        // Check if matching vehicle Vin was found
         if (found != null) {
-            // removes the vehicle with found VIN number
             dealership.getAllVehicles().remove(found);
-
-            // save the updated dealership to the CSV
             DealershipFileManager.saveDealership(dealership);
-
-            System.out.println("Vehicle removed successfully finally......");
+            System.out.println("Vehicle removed successfully!");
         }
         else {
             System.out.println("Could not find that Vehicles VIN");
         }
     }
 
-    //Sell and lease info
     private void processSellOrLease(){
-        String sellOrLease =
-                "S - Sell your vehicle \n" +
-                "L - Lease your vehicle \n" +
-                "B - Back to Main menu \n";
+        String sellOrLease = """
+                        S - Sell your vehicle
+                        L - Lease your vehicle
+                        B - Back to Main menu
+                        """;
         while (true){
             System.out.println(sellOrLease);
             char command;
 
-            command = ConsoleHelper.promptForChar("Enter \"Sell\" or \"Lease\"");
+            command = ConsoleHelper.promptForChar("Enter your choice");
 
             switch (command){
                 case 'S':
                     processSell();
                     break;
                 case 'L':
-                    processSLease();
+                    processLease();
                     break;
                 case 'B':
                     return;
@@ -221,36 +206,84 @@ public class UserInterface {
             }
         }
     }
+
     private void processSell(){
+        int vin = ConsoleHelper.promptForInt("What is the vehicle VIN number");
 
-        //• collect basic sales information from the user
-        int VIN  = ConsoleHelper.promptForInt("What is the vehicle VIN number");
-//        int year = ConsoleHelper.promptForInt("What is the Year of your vehicle");
-//        String make = ConsoleHelper.promptForString("What is the vehicle make?");
-//        String model = ConsoleHelper.promptForString("What is the vehicle model?");
-//        String vehicleType = ConsoleHelper.promptForString("What is the vehicle type");
-//        String color = ConsoleHelper.promptForString("What is the color of the vehicle");
-//        int odometer = ConsoleHelper.promptForInt("What is the mileage of the vehicle");
-//        double price = ConsoleHelper.promptForDouble("What is your asking price for the vehicle");
+        Vehicle vehicle = findVehicleByVin(vin);
+        if (vehicle == null) {
+            System.out.println("Vehicle not found");
+            return;
+        }
 
-        //• add the vehicle information to the contract
-        //• ask if it is a sale or lease  (Note: you can't lease a vehicle over 3 years old)
-        //• calculate pricing
+        String customerName = ConsoleHelper.promptForString("Customer name");
+        String customerEmail = ConsoleHelper.promptForString("Customer email");
+        String date = ConsoleHelper.promptForString("Contract date (MM/DD/YYYY)");
+
+        double salesTax = vehicle.getPrice() * 0.05;
+        double recordingFee = 100.00;
+        double processingFee = (vehicle.getPrice() < 10000) ? 295 : 495;
+        char financeChar = ConsoleHelper.promptForChar("Finance this vehicle? (Y/N)");
+        boolean finance = (financeChar == 'Y');
+
+        SalesContract contract = new SalesContract(vehicle, customerEmail, customerName, date,
+                salesTax, recordingFee, processingFee, finance);
+
+        ContractFileManager contractManager = new ContractFileManager();
+        contractManager.saveContract(contract);
+
+        System.out.println("\n--- SALE CONTRACT SUMMARY ---");
+        System.out.println("Total Price: $" + String.format("%.2f", contract.getTotalPrice()));
+        if (finance) {
+            System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
+        } else {
+            System.out.println("No financing selected");
+        }
+        System.out.println("Contract saved!");
     }
-    private void processSLease(){
 
-        //• collect basic sales information from the user
-        int VIN  = ConsoleHelper.promptForInt("What is the vehicle VIN number");
-//        int year = ConsoleHelper.promptForInt("What is the Year of your vehicle");
-//        String make = ConsoleHelper.promptForString("What is the vehicle make?");
-//        String model = ConsoleHelper.promptForString("What is the vehicle model?");
-//        String vehicleType = ConsoleHelper.promptForString("What is the vehicle type");
-//        String color = ConsoleHelper.promptForString("What is the color of the vehicle");
-//        int odometer = ConsoleHelper.promptForInt("What is the mileage of the vehicle");
-//        double price = ConsoleHelper.promptForDouble("What is your asking price for the vehicle");
+    private void processLease(){
+        int vin = ConsoleHelper.promptForInt("What is the vehicle VIN number");
 
-        //• add the vehicle information to the contract
-        //• ask if it is a sale or lease  (Note: you can't lease a vehicle over 3 years old)
-        //• calculate pricing
+        Vehicle vehicle = findVehicleByVin(vin);
+        if (vehicle == null) {
+            System.out.println("Vehicle not found");
+            return;
+        }
+
+        // Check if vehicle is over 3 years old (can't lease)
+        int currentYear = java.time.Year.now().getValue();
+        if (currentYear - vehicle.getYear() > 3) {
+            System.out.println("Cannot lease vehicles over 3 years old. This vehicle is " +
+                    (currentYear - vehicle.getYear()) + " years old.");
+            return;
+        }
+
+        String customerName = ConsoleHelper.promptForString("Customer name");
+        String customerEmail = ConsoleHelper.promptForString("Customer email");
+        String date = ConsoleHelper.promptForString("Contract date (MM/DD/YYYY)");
+
+        double expectedValue = vehicle.getPrice() * 0.5;
+        double leaseFee = vehicle.getPrice() * 0.07;
+
+        LeaseContract contract = new LeaseContract(vehicle, customerEmail, customerName, date,
+                expectedValue, leaseFee);
+
+        ContractFileManager contractManager = new ContractFileManager();
+        contractManager.saveContract(contract);
+
+        System.out.println("\n--- LEASE CONTRACT SUMMARY ---");
+        System.out.println("Total Price: $" + String.format("%.2f", contract.getTotalPrice()));
+        System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
+        System.out.println("Contract saved!");
+    }
+
+    private Vehicle findVehicleByVin(int vin) {
+        for (Vehicle v : dealership.getAllVehicles()) {
+            if (v.getVin() == vin) {
+                return v;
+            }
+        }
+        return null;
     }
 }

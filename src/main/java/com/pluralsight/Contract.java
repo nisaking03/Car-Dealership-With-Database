@@ -13,14 +13,14 @@ public abstract class Contract {
         this.vehicleSold = vehicleSold;
         this.customerEmail = customerEmail;
         this.customerName = customerName;
-        date = date;
+        this.date = date;
     }
 
     public String getContractDate() {
         return date;
     }
     public void setDate(String date) {
-        date = date;
+        this.date = date;
     }
 
     public String getCustomerName() {
