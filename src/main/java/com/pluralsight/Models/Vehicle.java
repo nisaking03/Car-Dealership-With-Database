@@ -87,15 +87,17 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return "\nVehicle: " + '\n' +
-                "Make = " + make + '\n' +
-                "Model = " + model + '\n' +
-                "Year = " + year + '\n' +
-                "Color = " + color + '\n' +
-                "Price = $" + String.format("%.2f", price) + '\n' +
-                "Mileage = " + odometer + '\n' +
-                "VIN = " + vin + '\n' +
-                "Type = " + vehicleType + '\n' +
-                "\n════════════════════";
+        return "\n╭┈┈┈┈┈┈┈┈┈┈┈╮" +
+                "\n|  Vehicle  |" +
+                "\n╰┈┈┈┈┈┈┈┈┈┈┈╯ " + '\n' +
+                "Make: " + make + '\n' +
+                "Model: " + model + '\n' +
+                "Year: " + year + '\n' +
+                "Color: " + color + '\n' +
+                "Price: $" + String.format("%.2f", price) + '\n' +
+                "Mileage: " + odometer + '\n' +
+                "VIN: " + vin + '\n' +
+                "Type: " + vehicleType + '\n' +
+                "\n⊰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━⊱";
     }
 }
