@@ -7,6 +7,7 @@ import com.pluralsight.Models.LeaseContract;
 import com.pluralsight.Models.SalesContract;
 import com.pluralsight.Models.Vehicle;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class UserInterface {
@@ -14,13 +15,14 @@ public class UserInterface {
     public Dealership dealership;
     DealershipDataManager dealershipFileManager;
 
-    public UserInterface(){
+    public UserInterface() throws SQLException {
         DealershipDataManager dealFileManager = new DealershipDataManager();
         dealership = dealFileManager.getDealership();
     }
 
     public void display(){
         String mainMenu = """
+                        
                         1 - Find vehicles within a price range
                         2 - Find vehicles by make / model
                         3 - Find vehicles by year range
@@ -82,7 +84,7 @@ public class UserInterface {
 
     private void displayVehicles(List<Vehicle> vehicles) {
         if (vehicles == null || vehicles.isEmpty()) {
-            System.out.println("No vehicles found.");
+            System.out.println("\nNo vehicles found.");
             return;
         }
 
@@ -180,10 +182,10 @@ public class UserInterface {
         if (found != null) {
             dealership.getAllVehicles().remove(found);
             DealershipDataManager.saveDealership(dealership);
-            System.out.println("Vehicle removed successfully!");
+            System.out.println("\nVehicle removed successfully!");
         }
         else {
-            System.out.println("Could not find that Vehicles VIN");
+            System.out.println("\nCould not find that Vehicles VIN");
         }
     }
 
@@ -209,7 +211,7 @@ public class UserInterface {
                 case 'B':
                     return;
                 default:
-                    System.out.println("Invalid Entry!");
+                    System.out.println("\nInvalid Entry!");
                     break;
             }
         }
@@ -220,7 +222,7 @@ public class UserInterface {
 
         Vehicle vehicle = findVehicleByVin(vin);
         if (vehicle == null) {
-            System.out.println("Vehicle not found");
+            System.out.println("\nVehicle not found");
             return;
         }
 
@@ -245,9 +247,9 @@ public class UserInterface {
         if (finance) {
             System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
         } else {
-            System.out.println("No financing selected");
+            System.out.println("\nNo financing selected");
         }
-        System.out.println("Contract saved!");
+        System.out.println("\nContract saved!");
     }
 
     private void processLease(){
@@ -255,7 +257,7 @@ public class UserInterface {
 
         Vehicle vehicle = findVehicleByVin(vin);
         if (vehicle == null) {
-            System.out.println("Vehicle not found");
+            System.out.println("\nVehicle not found");
             return;
         }
 
@@ -283,7 +285,7 @@ public class UserInterface {
         System.out.println("\n--- LEASE CONTRACT SUMMARY ---");
         System.out.println("Total Price: $" + String.format("%.2f", contract.getTotalPrice()));
         System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
-        System.out.println("Contract saved!");
+        System.out.println("\nContract saved!");
     }
 
     private Vehicle findVehicleByVin(int vin) {

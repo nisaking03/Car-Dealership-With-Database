@@ -96,6 +96,6 @@ public class Vehicle {
                 "Mileage = " + odometer + '\n' +
                 "VIN = " + vin + '\n' +
                 "Type = " + vehicleType + '\n' +
-                "════════════════════";
+                "\n════════════════════";
     }
 }

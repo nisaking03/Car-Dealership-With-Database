@@ -3,87 +3,248 @@ package com.pluralsight.Data;
 import com.pluralsight.Models.Dealership;
 import com.pluralsight.Models.Vehicle;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DealershipDataManager {
 
-    //Logic behind reading between "|" info in inventory file
-    public Dealership getDealership(){
+    public Dealership getDealership() throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
 
-        Dealership d = null;
-        try{
-            //Creates File/Buffered reader, splits between "|", reads first line separately from the rest
-            FileReader fileReader = new FileReader("inventory.csv");
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+        // Step 1: Get dealership info
+        String dealershipQuery = "SELECT * FROM dealerships LIMIT 1";
+        PreparedStatement prepared = connection.prepareStatement(dealershipQuery);
+        ResultSet resultSet = prepared.executeQuery();
 
-            String firstLine = bufferedReader.readLine();
+        String name = "";
+        String address = "";
+        String phone = "";
 
-            String[] line = firstLine.split("\\|");
-            String name = line[0];
-            String address = line[1];
-            String phone = line[2];
-
-            d = new Dealership(name, address, phone);
-            String lineFromString;
-
-            while((lineFromString = bufferedReader.readLine()) != null){
-
-                String[] part = lineFromString.split("\\|");
-                int vin = Integer.parseInt(part[0]);
-                int year = Integer.parseInt(part[1]);
-                String make = part[2];
-                String model = part[3];
-                String vehicleType = part[4];
-                String color = part[5];
-                int odometer = Integer.parseInt(part[6]);
-                double price = Double.parseDouble(part[7]);
-
-                //Creates vehicle object here
-                Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
-
-                d.addVehicle(v);
-            }
-            bufferedReader.close(); // makes it stop reading next line
-
-        } catch(Exception e){
-            e.printStackTrace();
-            System.out.println("getting Error from here lalkadadad");
+        if (resultSet.next()) {
+            name = resultSet.getString("name");
+            address = resultSet.getString("address");
+            phone = resultSet.getString("phone");
         }
-        return d;
+
+        Dealership dealership = new Dealership(name, address, phone);
+
+        // Step 2: Get all vehicles
+        String vehicleQuery = "SELECT * FROM vehicles";
+        PreparedStatement prepared1 = connection.prepareStatement(vehicleQuery);
+        ResultSet resultSet1 = prepared1.executeQuery();
+
+        while (resultSet1.next()) {
+            int vin = resultSet1.getInt("vin");
+            int year = resultSet1.getInt("year");
+            String make = resultSet1.getString("make");
+            String model = resultSet1.getString("model");
+            String vehicleType = resultSet1.getString("vehicleType");
+            String color = resultSet1.getString("color");
+            int odometer = resultSet1.getInt("odometer");
+            double price = resultSet1.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+            dealership.addVehicle(v);
+        }
+
+        connection.close();
+        return dealership;
     }
 
-    //Logic behind writing and saving info in file
-    public static void saveDealership(Dealership d){
+    public List<Vehicle> getVehicleByPrice(double min, double max) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
 
-        //Creates File/Buffered writer, Asks for specific info to split between "|"
-        try{
-            FileWriter fileWriter = new FileWriter("inventory.csv", false);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(d.getName() + "|" +
-                    d.getAddress() + "|" +
-                    d.getPhone());
+        String query = "SELECT * FROM vehicles WHERE price BETWEEN ? AND ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setDouble(1, min);
+        prepared.setDouble(2, max);
+        ResultSet resultSet = prepared.executeQuery();
 
-            for(Vehicle v : d.getAllVehicles()){
-                bufferedWriter.newLine();
-                bufferedWriter.write(v.getVin() + "|"
-                        + v.getYear() +"|"
-                        + v.getMake() + "|"
-                        + v.getModel() + "|"
-                        + v.getVehicleType() + "|"
-                        + v.getColor() + "|"
-                        + v.getOdometer() + "|"
-                        + v.getPrice());
-            }
-            bufferedWriter.close();
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String make = resultSet.getString("make");
+            String model = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String color = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
 
-        } catch(Exception e){
-            e.printStackTrace();
-            System.out.println("Error");
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+            vehicles.add(v);
         }
 
+        connection.close();
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByMakeModel(String make, String model) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String query = "SELECT * FROM vehicles WHERE make = ? AND model = ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setString(1, make);
+        prepared.setString(2, model);
+        ResultSet resultSet = prepared.executeQuery();
+
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String vehicleMake = resultSet.getString("make");
+            String vehicleModel = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String color = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, vehicleMake, vehicleModel, vehicleType, color, odometer, price);
+            vehicles.add(v);
+        }
+
+        connection.close();
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByYear(int min, int max) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String query = "SELECT * FROM vehicles WHERE year BETWEEN ? AND ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setInt(1, min);
+        prepared.setInt(2, max);
+        ResultSet resultSet = prepared.executeQuery();
+
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String make = resultSet.getString("make");
+            String model = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String color = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+            vehicles.add(v);
+        }
+
+        connection.close();
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByColor(String color) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String query = "SELECT * FROM vehicles WHERE color = ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setString(1, color);
+        ResultSet resultSet = prepared.executeQuery();
+
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String make = resultSet.getString("make");
+            String model = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String colorResult = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, colorResult, odometer, price);
+            vehicles.add(v);
+        }
+
+        connection.close();
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByMileage(int min, int max) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String query = "SELECT * FROM vehicles WHERE odometer BETWEEN ? AND ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setInt(1, min);
+        prepared.setInt(2, max);
+        ResultSet resultSet = prepared.executeQuery();
+
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String make = resultSet.getString("make");
+            String model = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String color = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+            vehicles.add(v);
+        }
+
+        connection.close();
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByType(String type) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        String query = "SELECT * FROM vehicles WHERE vehicleType = ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setString(1, type);
+        ResultSet resultSet = prepared.executeQuery();
+
+        while (resultSet.next()) {
+            int vin = resultSet.getInt("vin");
+            int year = resultSet.getInt("year");
+            String make = resultSet.getString("make");
+            String model = resultSet.getString("model");
+            String vehicleType = resultSet.getString("vehicleType");
+            String color = resultSet.getString("color");
+            int odometer = resultSet.getInt("odometer");
+            double price = resultSet.getDouble("price");
+
+            Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+            vehicles.add(v);
+        }
+
+        connection.close();
+        return vehicles;
+    }
+
+    //SELECT * FROM vehicles WHERE price BETWEEN ? AND ?
+    //SELECT * FROM vehicles WHERE make = ? AND model = ?
+    //SELECT * FROM vehicles WHERE year BETWEEN ? AND ?
+    //SELECT * FROM vehicles WHERE color = ?
+    //SELECT * FROM vehicles WHERE odometer BETWEEN ? AND ?
+    //SELECT * FROM vehicles WHERE vehicleType = ?
+    //SELECT * FROM vehicles
+
+    //try (
+    //            Connection connection = DriverManager.getConnection(URL, username, password);
+    //            Statement statement = connection.createStatement();
+    //            ResultSet results1 = statement.executeQuery(query1);
+    //                )
+    //        {
+    //            // Getting the information and turning it into an object
+    //            while (results1.next()) {
+    //                int productID = results1.getInt("ProductID");
+    //                String productName = results1.getString("ProductName");
+    //                double unitPrice = results1.getDouble("UnitPrice");
+    //                int unitsInStock = results1.getInt("UnitsInStock");
+    //
+    //                System.out.printf("\n%-10d %-35s %-13.2f %-10d\n", productID, productName, unitPrice, unitsInStock);
+    //            }
+
+    public static void saveDealership(Dealership d) {
+        // Your new code here - saves to database
+        // instead of writing file
     }
 
 }
