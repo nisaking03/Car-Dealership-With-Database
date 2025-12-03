@@ -1,7 +1,7 @@
 package com.pluralsight.UserInterface;
 
 import com.pluralsight.Data.ContractFileManager;
-import com.pluralsight.Data.DealershipFileManager;
+import com.pluralsight.Data.DealershipDataManager;
 import com.pluralsight.Models.Dealership;
 import com.pluralsight.Models.LeaseContract;
 import com.pluralsight.Models.SalesContract;
@@ -12,10 +12,10 @@ import java.util.List;
 public class UserInterface {
 
     public Dealership dealership;
-    DealershipFileManager dealershipFileManager;
+    DealershipDataManager dealershipFileManager;
 
     public UserInterface(){
-        DealershipFileManager dealFileManager = new DealershipFileManager();
+        DealershipDataManager dealFileManager = new DealershipDataManager();
         dealership = dealFileManager.getDealership();
     }
 
@@ -162,7 +162,7 @@ public class UserInterface {
         Vehicle vehicleToAdd = new Vehicle(VIN, year, make, model, vehicleType, color, odometer, price);
         dealership.addVehicle(vehicleToAdd);
 
-        DealershipFileManager.saveDealership(dealership);
+        DealershipDataManager.saveDealership(dealership);
     }
 
     private void processRemoveVehicleRequest(){
@@ -179,7 +179,7 @@ public class UserInterface {
 
         if (found != null) {
             dealership.getAllVehicles().remove(found);
-            DealershipFileManager.saveDealership(dealership);
+            DealershipDataManager.saveDealership(dealership);
             System.out.println("Vehicle removed successfully!");
         }
         else {

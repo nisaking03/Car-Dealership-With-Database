@@ -8,7 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-public class DealershipFileManager {
+public class DealershipDataManager {
 
     //Logic behind reading between "|" info in inventory file
     public Dealership getDealership(){
