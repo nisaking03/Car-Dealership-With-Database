@@ -218,6 +218,38 @@ public class DealershipDataManager {
         return vehicles;
     }
 
+    public void addVehicle(Vehicle vehicle) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+
+        String query = "INSERT INTO vehicles (vin, year, make, model, vehicleType, color, odometer, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setInt(1, vehicle.getVin());
+        prepared.setInt(2, vehicle.getYear());
+        prepared.setString(3, vehicle.getMake());
+        prepared.setString(4, vehicle.getModel());
+        prepared.setString(5, vehicle.getVehicleType());
+        prepared.setString(6, vehicle.getColor());
+        prepared.setInt(7, vehicle.getOdometer());
+        prepared.setDouble(8, vehicle.getPrice());
+
+        int rows = prepared.executeUpdate();
+        System.out.printf("Rows updated %d\n", rows);
+        connection.close();
+    }
+
+    public void removeVehicle(Vehicle vehicle) throws SQLException {
+        Connection connection = DatabaseConnection.getConnection();
+
+        String query = "DELETE FROM vehicles WHERE vin = ?";
+        PreparedStatement prepared = connection.prepareStatement(query);
+        prepared.setInt(1, vehicle.getVin());
+
+        int rows = prepared.executeUpdate();
+        System.out.printf("Rows updated %d\n", rows);
+        connection.close();
+    }
+    //DELETE FROM vehicles WHERE vin = ?
+
     //SELECT * FROM vehicles WHERE price BETWEEN ? AND ?
     //SELECT * FROM vehicles WHERE make = ? AND model = ?
     //SELECT * FROM vehicles WHERE year BETWEEN ? AND ?

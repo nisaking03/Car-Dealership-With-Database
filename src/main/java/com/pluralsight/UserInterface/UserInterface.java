@@ -16,8 +16,8 @@ public class UserInterface {
     DealershipDataManager dealershipFileManager;
 
     public UserInterface() throws SQLException {
-        DealershipDataManager dealFileManager = new DealershipDataManager();
-        dealership = dealFileManager.getDealership();
+        DealershipDataManager dealDataManager = new DealershipDataManager();
+        dealership = dealDataManager.getDealership();
     }
 
     public void display(){
@@ -175,28 +175,38 @@ public class UserInterface {
         Vehicle vehicleToAdd = new Vehicle(VIN, year, make, model, vehicleType, color, odometer, price);
         dealership.addVehicle(vehicleToAdd);
 
-        DealershipDataManager.saveDealership(dealership);
+        try {
+            DealershipDataManager dealDataManager = new DealershipDataManager();
+            dealDataManager.addVehicle(vehicleToAdd);
+            System.out.println("Vehicle added successfully!");
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
     }
 
     private void processRemoveVehicleRequest(){
         int vin = ConsoleHelper.promptForInt("What is the vehicle VIN number");
 
-        Vehicle found = null;
+        try {
+            DealershipDataManager dm = new DealershipDataManager();
+            List<Vehicle> allVehicles = dm.getVehicleByVIN(0, Double.MAX_VALUE);
 
-        for(Vehicle v : dealership.getAllVehicles()){
-            if(vin == v.getVin()){
-                found = v;
-                break;
+            Vehicle found = null;
+            for(Vehicle v : allVehicles){
+                if(vin == v.getVin()){
+                    found = v;
+                    break;
+                }
             }
-        }
 
-        if (found != null) {
-            dealership.getAllVehicles().remove(found);
-            DealershipDataManager.saveDealership(dealership);
-            System.out.println("\nVehicle removed successfully!");
-        }
-        else {
-            System.out.println("\nCould not find that Vehicles VIN");
+            if (found != null) {
+                dm.removeVehicle(found);
+                System.out.println("Vehicle removed successfully!");
+            } else {
+                System.out.println("Could not find that Vehicles VIN");
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
         }
     }
 
@@ -293,7 +303,7 @@ public class UserInterface {
         ContractFileManager contractManager = new ContractFileManager();
         contractManager.saveContract(contract);
 
-        System.out.println("\n--- LEASE CONTRACT SUMMARY ---");
+        System.out.println("\n⊰━━━━━━━━━━━━━ Lease Contract Summary ━━━━━━━━━━━━━⊱");
         System.out.println("Total Price: $" + String.format("%.2f", contract.getTotalPrice()));
         System.out.println("Monthly Payment: $" + String.format("%.2f", contract.getMonthlyPayment()));
         System.out.println("\nContract saved!");
